@@ -1,17 +1,28 @@
-// const express = require('express');
-import express from 'express';
-import home, { contact } from './pages/home.js';
-import about from './pages/about.js';
+ import express from 'express';
+ import path from 'path';
 const app = express();
+const absPath = path.resolve("view");
 
-app.get("", (req, resp) => {
-    resp.send(home());
+const publicPath = path.resolve("public");
+
+app.use(express.static(publicPath));
+
+
+app.get("/", (res, resp) => {
+    resp.sendFile(absPath+"/home.html");
+})   
+
+app.get("/login", (res, resp) => {
+   
+ resp.sendFile(absPath+"/login.html");});
+
+app.get("/about", (res, resp) => {
+    resp.sendFile(absPath+"/about.html");
 });
-app.get("/about", (req, resp) => {
-    resp.send(about());
+
+app.use((req, resp) => {
+    
+    resp.status(404).sendFile(absPath+"/404.html");
 });
-app.get("/contact", (req, resp) => {
-    resp.send(contact());
-})
 
 app.listen(3000);
