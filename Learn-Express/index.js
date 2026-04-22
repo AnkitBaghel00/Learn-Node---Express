@@ -1,47 +1,35 @@
 import express from 'express';
+import path from 'path';
 const app = express();
 
+app.use(express.urlencoded({extended: false}));
+app.use(express.static('public'));
 
-function checkAgeRouteMiddleware(req, resp, next){
-    console.log(req.query.age);
+
+app.get('/', (req, resp) => {
+    const filePath = path.resolve('view/home.html');
+    resp.sendFile(filePath);
+})
+
+
+app.get('/login', (req, resp) => {
+    resp.send(`
+        <form action="/submit" method="post">
+        <input type="text" placeholder="enter email" name="email"/>
+        <input type="password" placeholder="enter password" name="password"/>
+        <button type="submit">login</button>
+        </form>
+        `);
+})
+
+app.post('/submit', (req, resp) => {
+    console.log("user login details are : ",req.body);
     
-    if(!req.query.age || req.query.age < 18){
-        resp.send("You are not allowed to used this website"); 
-    }else {
-        next();
-    }
-}
+    resp.send("Submit Page");
+})
 
-function checkURLRouteMiddleware(req, resp, next){
-
-    console.log("This request url is", req.url);
-    
-    next();
-}
-
-
-
-app.get('',(req, resp) => {
-    resp.send("<h1>Home Page</h1>");
-});
-
-app.get('/login',checkURLRouteMiddleware,(req, resp) => {
-    resp.send("<h1>Login Page</h1>");
-});
-
-
-app.get('/users', checkAgeRouteMiddleware, checkURLRouteMiddleware, (req, resp) => {
-    resp.send("<h1>Users Page</h1>");
-});
-
-
-app.get('/products',checkAgeRouteMiddleware,checkURLRouteMiddleware,(req, resp) => {
-    resp.send("<h1>Products Page</h1>");
-});
-
-
-
-
-
+app.get('/users', (req, resp) => {
+    resp.send("Users Page");
+})
 
 app.listen(3000);
