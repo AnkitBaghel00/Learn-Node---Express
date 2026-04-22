@@ -1,17 +1,23 @@
 import express from 'express';
-import morgan from 'morgan';
-
 const app = express();
-app.use(morgan('dev'));
 
 
 app.get('/', (req, resp) => {
-     resp.send("Home page");
-})
+    resp.send("Home Page")
+});
 
-app.get("/users", (req, resp) => {
-    resp.send("Users page");
+app.get('/users', (req, resp) => {
+    resp.send1("Users Page")
+});
+
+app.get('/error', (req, resp) => {
+    resp.send("Error Page")
 });
 
 
+function errorHandling(error, req, resp, next){
+    resp.status(error.status || 500).send("Try after some time");
+}
+
+app.use(errorHandling)
 app.listen(3000);
